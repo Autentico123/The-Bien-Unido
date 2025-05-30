@@ -1,21 +1,57 @@
 {
-  "name": "backend",
+  "name": "bien-unido-citizen-app-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "Backend API for Bien Unido Citizen App connecting citizens with their local government",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "lint": "eslint ."
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "api",
+    "express",
+    "node",
+    "sequelize",
+    "mysql",
+    "government",
+    "citizen"
+  ],
+  "author": "Bien Unido Development Team",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.6.1",
+    "compression": "^1.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.0",
     "mysql2": "^3.14.1",
-    "sequelize": "^6.37.7"
+    "nanoid": "^5.1.5",
+    "nodemailer": "^7.0.3",
+    "sequelize": "^6.37.7",
+    "twilio": "^5.7.0",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "sequelize-cli": "^6.6.2",
+    "supertest": "^6.3.4"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
