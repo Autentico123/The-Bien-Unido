@@ -41,7 +41,7 @@ The Bien Unido Citizen App empowers residents to report issues, receive importan
 - **Web**: React.js with modern hooks and context
 - **Mobile**: React Native for cross-platform mobile app
 - **Styling**:
-  - **Web**: Tailwind CSS for utility-first styling
+  - **Web**: Tailwind CSS for utility-first styling and daisyui
   - **Mobile**: React Native Elements
 - **Animation**: Framer Motion for smooth UI transitions and interactions
 

@@ -1,7 +1,8 @@
 ## Code Quality
 
 - Ensure code is clean, readable, and follows best practices.
-- Make sure it follows software_requirements_specification.md
+- Make sure it follows software_requirements_specification.md and database_design.md
+- Ensure you have the guide me a following directory structure each changes
 
 ## Coding Standards
 
