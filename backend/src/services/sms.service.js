@@ -38,7 +38,7 @@ const sendSMS = async (to, message) => {
       formattedNumber = `+${to}`;
     }
 
-    // Check if we're in development mode
+    //Check if we're in development mode
     if (process.env.NODE_ENV === "development") {
       logger.info("Development mode: Would send SMS to:", {
         to: formattedNumber,
@@ -55,10 +55,33 @@ const sendSMS = async (to, message) => {
       to: formattedNumber,
     });
 
-    logger.info("SMS sent:", smsMessage.sid);
+    logger.info("SMS sent successfully:", {
+      sid: smsMessage.sid,
+      to: formattedNumber,
+    });
+    return smsMessage;
   } catch (error) {
-    logger.error("SMS send error", error);
-    throw error;
+    logger.error("SMS send error:", {
+      error: error.message,
+      code: error.code,
+      to: to,
+      twilioError: error.moreInfo || "No additional info",
+    });
+
+    // Check for common Twilio errors
+    if (error.code === 21608) {
+      throw new Error(
+        "Unverified recipient number. In trial mode, you can only send to verified numbers."
+      );
+    } else if (error.code === 21211) {
+      throw new Error("Invalid phone number format.");
+    } else if (error.code === 21612) {
+      throw new Error(
+        "Twilio account is not permitted to send SMS to this region."
+      );
+    } else {
+      throw error;
+    }
   }
 };
 

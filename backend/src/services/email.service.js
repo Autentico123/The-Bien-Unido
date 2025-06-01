@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const logger = require("../utils/logger");
+const emailTemplates = require("../templates/emails");
 
 // Create nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -20,7 +21,6 @@ const transporter = nodemailer.createTransport({
  * @param {string} html - Optional HTML email body
  * @returns {Promise} - Resolves with info object on success
  */
-
 const sendEmail = async (to, subject, text, html = null) => {
   try {
     // Skip sending emails in test environment
@@ -30,12 +30,28 @@ const sendEmail = async (to, subject, text, html = null) => {
     }
 
     const mailOptions = {
-      from: `Bien Unido App <${process.env.SMTP_USER}>`,
+      from: {
+        name: "Bien Unido Citizen App",
+        address: process.env.SMTP_USER,
+      },
       to,
       subject,
       text,
       html: html || undefined,
+      headers: {
+        "X-Priority": "1", // Highest priority
+        "X-MSMail-Priority": "High",
+        Importance: "High",
+      },
     };
+
+    // Verify connection configuration
+    try {
+      await transporter.verify();
+    } catch (verifyError) {
+      logger.error("SMTP connection verification failed:", verifyError);
+      throw new Error("Failed to connect to email server");
+    }
 
     const info = await transporter.sendMail(mailOptions);
     logger.info("Email sent", info.messageId);
@@ -46,6 +62,22 @@ const sendEmail = async (to, subject, text, html = null) => {
   }
 };
 
+/**
+ * Send verification email
+ * @param {string} to - Recipient email address
+ * @param {string} name - Recipient name
+ * @param {string} verificationCode - Verification code
+ * @returns {Promise} - Resolves with info object on success
+ */
+const sendVerificationEmail = async (to, name, verificationCode) => {
+  const subject = "Verify Your Email - Bien Unido Citizen App";
+  const text = `Hello ${name || "there"},\n\nThank you for registering with the Bien Unido Citizen App. To complete your registration, please use this verification code: ${verificationCode}\n\nThis code will expire in 15 minutes. If you did not request this verification, please ignore this email.\n\nBest regards,\nThe Bien Unido Citizen App Team`;
+  const html = emailTemplates.verificationEmail({ name, verificationCode });
+
+  return sendEmail(to, subject, text, html);
+};
+
 module.exports = {
   sendEmail,
+  sendVerificationEmail,
 };

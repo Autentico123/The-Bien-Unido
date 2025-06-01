@@ -1,15 +1,18 @@
+const { Sequelize } = require("sequelize");
 const sequelize = require("../config/database");
 const User = require("./user.model");
+const UserDevice = require("./userDevice.model");
 
-// Import any other models here
-// const Report = require('./report.model');
-// ...etc
+//Define model associations
+User.hasMany(UserDevice, { foreignKey: "user_id", as: "devices" });
+UserDevice.belongsTo(User, { foreignKey: "user_id", as: "user" });
 
-// Define model associations here (will be expanded later)
-// User.hasMany(Report, { foreignKey: 'user_id', as: 'reports' });
-// ...etc
+// Define Sequelize operator aliases
+const Op = Sequelize.Op;
 
 module.exports = {
   sequelize,
   User,
+  UserDevice,
+  Op,
 };
