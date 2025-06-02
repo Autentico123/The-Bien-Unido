@@ -17,7 +17,18 @@ const storage = multer.diskStorage({
     // Generate unique filename with original extension
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
-    cb(null, "report-image-" + uniqueSuffix + ext);
+
+    // Prefix based on content type
+    let prefix = "file";
+    if (req.baseUrl.includes("/reports")) {
+      prefix = "report";
+    } else if (req.baseUrl.includes("/alerts")) {
+      prefix = "alert";
+    } else if (req.baseUrl.includes("/services")) {
+      prefix = "service";
+    }
+
+    cb(null, `${prefix}-${uniqueSuffix}${ext}`);
   },
 });
 
@@ -39,12 +50,12 @@ const upload = multer({
   },
 });
 
-// Middleware to handle multiple image uploads
-const uploadReportImages = upload.array("images", 5); // Max 5 images per report
+// Middleware to handle multiple image uploads for reports
+const handleReportImages = upload.array("images", 5); // Max 5 images per report
 
-// Middleware to handle errors from multer
-const handleUploadErrors = (req, res, next) => {
-  uploadReportImages(req, res, function (err) {
+// Error handler middleware for report image uploads
+const handleReportUploadErrors = (req, res, next) => {
+  handleReportImages(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       // A Multer error occurred
       if (err.code === "LIMIT_FILE_SIZE") {
@@ -52,9 +63,7 @@ const handleUploadErrors = (req, res, next) => {
           status: "error",
           message: "File too large. Max size is 5MB.",
         });
-      }
-
-      if (err.code === "LIMIT_FILE_COUNT") {
+      } else if (err.code === "LIMIT_FILE_COUNT") {
         return res.status(400).json({
           status: "error",
           message: "Too many files. Maximum is 5 images.",
@@ -78,6 +87,42 @@ const handleUploadErrors = (req, res, next) => {
   });
 };
 
+// Single file upload middleware with error handling
+const handleSingleUpload = (fieldName) => {
+  return (req, res, next) => {
+    const singleUpload = upload.single(fieldName);
+
+    singleUpload(req, res, function (err) {
+      if (err instanceof multer.MulterError) {
+        // A Multer error occurred
+        if (err.code === "LIMIT_FILE_SIZE") {
+          return res.status(400).json({
+            status: "error",
+            message: "File too large. Max size is 5MB.",
+          });
+        }
+
+        return res.status(400).json({
+          status: "error",
+          message: err.message,
+        });
+      } else if (err) {
+        // An unknown error occurred
+        return res.status(400).json({
+          status: "error",
+          message: err.message,
+        });
+      }
+
+      // Everything went fine
+      next();
+    });
+  };
+};
+
+// Export the middleware helpers and the upload instance
 module.exports = {
-  handleUploadErrors,
+  handleUploadErrors: handleReportUploadErrors,
+  single: handleSingleUpload,
+  upload,
 };
