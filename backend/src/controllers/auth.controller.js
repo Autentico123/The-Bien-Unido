@@ -29,6 +29,7 @@ const register = async (req, res, next) => {
       address,
       barangay,
       password,
+      role = "citizen", // Default to citizen if not provided
     } = req.body;
 
     // Check if user already exists with the same email or mobile
@@ -66,6 +67,7 @@ const register = async (req, res, next) => {
       mobile,
       address,
       barangay,
+      role,
       password_hash: password, // This will be hashed by the model hook
       verification_code: verificationCode,
     });

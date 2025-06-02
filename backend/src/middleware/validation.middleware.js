@@ -58,6 +58,11 @@ const validateRegistration = [
     .isLength({ min: 5, max: 255 })
     .withMessage("Address must be between 5 and 255 characters"),
   body("barangay").trim().notEmpty().withMessage("Barangay is required"),
+  body("role")
+    .optional()
+    .trim()
+    .isIn(["citizen", "admin", "official"])
+    .withMessage("Role must be citizen, admin, or official"),
   body("password")
     .trim()
     .notEmpty()

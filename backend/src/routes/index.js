@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const authRoutes = require("./auth.routes");
+const reportRoutes = require("./report.routes");
+// const serviceRoutes = require("./services.routes");
+const serviceScheduleRoutes = require("./serviceSchedules.routes");
 
 //Mount routes
 router.use("/auth", authRoutes);
+router.use("/reports", reportRoutes);
+router.use("/schedules", serviceScheduleRoutes);
 
 // API documentation route
 router.get("/", (req, res) => {

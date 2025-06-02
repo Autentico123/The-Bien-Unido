@@ -108,7 +108,7 @@ const isAdmin = (req, res, next) => {
  * @param {Function} next - Express next middleware function
  */
 const isOfficial = (req, res, next) => {
-  if (!req.user.role !== "official" && req.user.role !== "admin") {
+  if (req.user.role !== "official" && req.user.role !== "admin") {
     return res.status(403).json({
       status: "error",
       message: "Access denied. Official privileges required.",
